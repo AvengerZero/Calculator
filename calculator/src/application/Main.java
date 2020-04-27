@@ -1,4 +1,5 @@
 package application;
+import java.lang.Math;
 	
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -57,6 +58,17 @@ public class Main extends Application {
 		System.out.println(output.getText());
 		Operation calc = convert(output.getText());
 		output.setText("" + calc.solve());
+	}
+	
+	@FXML
+	public void logCalc(ActionEvent event) {
+		try {
+			System.out.println("HelloWorld");
+			output.setText("" + Math.log(Double.parseDouble(output.getText())));
+		} catch(Exception e) {
+			output.setText("error");
+			e.printStackTrace();
+		}
 	}
 	
 	@FXML
@@ -262,39 +274,42 @@ public class Main extends Application {
 	}
 	
 	public Operation convert(String text) {
-		Operation op = new Operation ((Operation) null, (Operation) null, -2, -1);
-		
-
-		int add = text.indexOf("+");
-		int sub = text.indexOf("-");
-		if (add == -1 && sub == -1){
-			int mul = text.indexOf("*");
-			int div = text.indexOf("/");
-			if (mul == -1 && div == -1) {
-				int log = text.indexOf("l");
-				if (log == -1) {
+		try {
+			if (text.length() == 0) {
+				return null;
+			}
+			Operation op = new Operation ((Operation) null, (Operation) null, -2, -1);
+			
+	
+			int add = text.indexOf("+");
+			int sub = text.indexOf("-");
+			if (add == -1 && sub == -1){
+				int mul = text.indexOf("*");
+				int div = text.indexOf("/");
+				if (mul == -1 && div == -1) {
 					System.out.println(text);
 					op = new Operation ((Operation) null, (Operation) null, -1, Double.parseDouble(text));
-				} else if (log != -1) {
-					System.out.println(text + ": " + mul);
-					op = new Operation (this.convert(text.substring(log + 2)), null, 4, -1);
 				}
+				else if ((mul < div || div == -1) && mul != -1){
+					System.out.println(text + ": " + mul);
+					op = new Operation (this.convert(text.substring(0,mul)), this.convert(text.substring(mul + 1)), 2, -1);
+				} else if (div != -1) {
+					System.out.println(text + ": " + div);
+					op = new Operation (this.convert(text.substring(0,div)), this.convert(text.substring(div + 1)), 3, -1);
+				}
+			}else if ((add < sub || sub == -1) && add != -1) {
+				System.out.println(text + ":a " + add);
+				op = new Operation (this.convert(text.substring(0,add)), this.convert(text.substring(add + 1)), 0, -1);
+			} else if(sub != -1) {	
+				System.out.println(text + ": " + sub);
+				op = new Operation (this.convert(text.substring(0,sub)), this.convert(text.substring(sub + 1)), 1, -1);
 			}
-			else if ((mul < div || div == -1) && mul != -1){
-				System.out.println(text + ": " + mul);
-				op = new Operation (this.convert(text.substring(0,mul)), this.convert(text.substring(mul + 1)), 2, -1);
-			} else if (div != -1) {
-				System.out.println(text + ": " + div);
-				op = new Operation (this.convert(text.substring(0,div)), this.convert(text.substring(div + 1)), 3, -1);
-			}
-		}else if ((add < sub || sub == -1) && add != -1) {
-			System.out.println(text + ":a " + add);
-			op = new Operation (this.convert(text.substring(0,add)), this.convert(text.substring(add + 1)), 0, -1);
-		} else if(sub != -1) {	
-			System.out.println(text + ": " + sub);
-			op = new Operation (this.convert(text.substring(0,sub)), this.convert(text.substring(sub + 1)), 1, -1);
+			return op;
+		} catch(Exception e) {
+			output.setText("error");
+			e.printStackTrace();
 		}
-		return op;
+		return null;
 	}
 	
 	public static void main(String[] args) {

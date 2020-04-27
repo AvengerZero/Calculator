@@ -57,7 +57,7 @@
     
     <HBox fx:id="5" spacing="10" alignment="CENTER">
     	<Button text="." prefWidth="50" font="$FONT" onAction="#handle"/>
-        <Button text="ln" prefWidth="170" font="$FONT" onAction="#handle"/>
+        <Button text="ln" prefWidth="170" font="$FONT" onAction="#logCalc"/>
         
     </HBox>
     
